@@ -1,0 +1,61 @@
+body {
+    border-radius: 999%;
+    background-color:rgba(209, 37, 37, 0.177)
+}
+/* ASIDE in due colonne metà/metà, con righe Title+List a sinistra, Image a destra su tutte le righe */
+aside { /*lo so avrei dovuto predisporre un semplice container :)*/
+  display: grid;
+  grid-template-columns: 1fr 1fr;        /* metà | metà */
+  grid-template-rows: auto 1fr;          /* riga 1: titolo; riga 2: lista che si espande */
+  grid-template-areas:
+    "title image"
+    "list  image";
+  min-height: 20vh;                     
+  gap: 0;
+  background: #e9bebe;                   
+  border-radius: 500px;
+}
+
+
+/* Assegno le aree */
+aside h1 { 
+  grid-area: title; 
+  margin: 0 0 12px 0;
+  font: 600 1.25rem/1.2 system-ui, sans-serif;
+  font-size: 48px;
+}
+
+aside ul { 
+  grid-area: list; 
+  list-style: none; 
+  margin: 0; 
+  padding: 0;
+}
+
+aside li {
+  border-top: 1px solid #ddd;
+  padding: 6px 0;
+}
+
+aside li:first-child { border-top: none; }
+
+/* L’immagine occupa tutta la metà destra, senza buchi in alto */
+aside img {
+  grid-area: image;     /* sta sempre nella colonna destra */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;    /* riempie senza deformare (ritaglio se serve) */
+  display: block;
+}
+
+
+ul li p {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;      /* regola a piacere */
+  line-height: 1.5;
+  margin: 0;
+}
+
+
+
+/*aggiunte parti come nel font-family in ul li p con copilot sto imparando ancora delle tecniche*/
