@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Caricamento ricetta...</title>
+    <link rel="stylesheet" href="ricette.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <header>
+      <h1 id="titolo-ricetta">Caricamento...</h1>
+      <ul id="lista-ingredienti"></ul>
+      <img id="img-ricetta" src="" alt="" />
+    </header>
+
+    <main>
+      <div class="descrizione">
+        <ul>
+          <li>Difficoltà: <strong id="difficolta"></strong></li>
+          <li>Preparazione: <strong id="tempo"></strong></li>
+        </ul>
+      </div>
+      <div class="testo">
+        <h1>Preparazione</h1>
+        <p id="testo-preparazione"></p>
+      </div>
+    </main>
+
+    <script>
+      const SUPABASE_URL = "IL_TUO_SUPABASE_URL";
+      const SUPABASE_ANON_KEY = "LA_TUA_SUPABASE_ANON_KEY";
+      const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+      );
+
+      async function caricaDettaglio() {
+        // Legge l'ID dall'URL (es: dettaglio.html?id=XYZ)
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+
+        if (!id) {
+          document.body.innerHTML = "<h2>Ricetta non trovata</h2>";
+          return;
+        }
+
+        const { data: ricetta, error } = await supabaseClient
+          .from("ricette")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (error || !ricetta) {
+          document.body.innerHTML =
+            "<h2>Errore nel caricamento della ricetta</h2>";
+          return;
+        }
+
+        // Riempie la pagina con i dati del database
+        document.title = ricetta.titolo;
+        document.getElementById("titolo-ricetta").innerText = ricetta.titolo;
+        document.getElementById("img-ricetta").src = ricetta.immagine;
+        document.getElementById("img-ricetta").alt = ricetta.titolo;
+        document.getElementById("difficolta").innerText = ricetta.difficolta;
+        document.getElementById("tempo").innerText = ricetta.tempo;
+        document.getElementById("testo-preparazione").innerText =
+          ricetta.preparazione;
+
+        // Gestione ingredienti (supponendo sia una stringa o lista)
+        const lista = document.getElementById("lista-ingredienti");
+        lista.innerHTML = `<li>${ricetta.ingredienti}</li>`;
+      }
+
+      caricaDettaglio();
+    </script>
+  </body>
+</html>
