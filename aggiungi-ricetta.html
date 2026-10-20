@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aggiungi Ricetta</title>
+    <link rel="stylesheet" href="ricette.css" />
+
+    <!-- 1. CARICAMENTO LIBRERIA SUPABASE (Importante!) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <main>
+      <h1>Aggiungi una nuova ricetta</h1>
+
+      <form id="recipeForm">
+        <div>
+          <label for="titolo">Titolo Ricetta:</label><br />
+          <input type="text" id="titolo" required />
+        </div>
+
+        <div>
+          <label for="categoria">Categoria:</label><br />
+          <input type="text" id="categoria" required />
+        </div>
+
+        <div>
+          <label for="difficolta">Difficoltà:</label><br />
+          <input type="text" id="difficolta" required />
+        </div>
+
+        <div>
+          <label for="tempo">Tempo di preparazione:</label><br />
+          <input type="text" id="tempo" required />
+        </div>
+
+        <div>
+          <label for="immagine">URL Immagine:</label><br />
+          <input type="text" id="immagine" required />
+        </div>
+
+        <div>
+          <label for="ingredienti">Ingredienti:</label><br />
+          <textarea id="ingredienti" rows="3"></textarea>
+        </div>
+
+        <div>
+          <label for="preparazione">Preparazione:</label><br />
+          <textarea id="preparazione" rows="4"></textarea>
+        </div>
+
+        <button type="submit">Salva Ricetta</button>
+      </form>
+    </main>
+
+    <script>
+      // 2. INIZIALIZZAZIONE DEL CLIENT SUPABASE (Importante!)
+      const SUPABASE_URL = "https://phmfqjcjimsalpqxlruz.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_yxbhq1Dyn3lZIFIEkU8TNg_pS1m4SGn";
+
+      // Qui viene definita la variabile supabaseClient che mancava!
+      const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+      );
+
+      // 3. GESTIONE DEL FORM
+      document
+        .getElementById("recipeForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const nuovaRicetta = {
+            titolo: document.getElementById("titolo").value,
+            categoria: document.getElementById("categoria").value,
+            difficolta: document.getElementById("difficolta").value,
+            tempo: document.getElementById("tempo").value,
+            immagine: document.getElementById("immagine").value,
+            ingredienti: document.getElementById("ingredienti").value,
+            preparazione: document.getElementById("preparazione").value,
+          };
+
+          const { data, error } = await supabaseClient
+            .from("ricette")
+            .insert([nuovaRicetta])
+            .select();
+
+          if (error) {
+            console.error("Errore durante l'inserimento:", error);
+            alert("Errore nell'inserimento: " + error.message);
+          } else {
+            alert("Ricetta salvata con successo!");
+            document.getElementById("recipeForm").reset();
+            // Torna alla home per vedere la ricetta inserita
+            window.location.href = "index.html";
+          }
+        });
+    </script>
+  </body>
+</html>
