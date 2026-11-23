@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sito di ricette</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="ricette.css" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Nunito (testo) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Oooh Baby (scritta “fancy”) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oooh+Baby&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bungee&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+      }
+
+      .modal.is-open,
+      .modal[aria-hidden="false"] {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal__backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+      }
+
+      .modal__dialog {
+        position: relative;
+        z-index: 2;
+        background: #fff;
+        max-width: 560px;
+        width: 92%;
+        max-height: 88vh;
+        overflow-y: auto;
+        padding: 1.5rem;
+        border-radius: 16px;
+      }
+
+      .modal__close {
+        position: sticky;
+        top: 0;
+        float: right;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="header">
+      <section class="header__inner">
+        <h1>La cucina Giulia e Marco</h1>
+
+        <nav>
+          <ul>
+            <li><a href="#">Ricette</a></li>
+            <li><a href="#">Eventi</a></li>
+            <li>
+              <button
+                type="button"
+                class="nav-btn"
+                data-modal-target="#blogModal"
+              >
+                Blog
+              </button>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="header-cta">
+          <a href="#" class="btn">iscriviti</a>
+        </div>
+
+        <button class="menu-toggle" aria-label="Apri menu">
+          <!-- icona hamburger -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
+          </svg>
+        </button>
+      </section>
+    </header>
+
+    <main>
+      <section class="trending-recipies">
+        <hgroup class="hgroup">
+          <p class="fancy-text">Le migliori</p>
+          <h2>Ricette di tendenza</h2>
+        </hgroup>
+      </section>
+
+      <section class="hero">
+        <hgroup>
+          <h2>Tutte le ricette di tendenza di casa di Giulia e Marco</h2>
+          <hr />
+          <p>
+            Qui puoi trovare tutte le migliori ricette preparate in casa.
+            esplora il sito a piacimento e cimentati nella preparazione delle
+            ricette che più ti entusiasmano!
+          </p>
+        </hgroup>
+      </section>
+
+      <section class="recipies">
+        <div class="difficolta"></div>
+        <ul class="recipies-grid">
+          <!-- Template nascosto con la stessa struttura CSS delle tue card -->
+          <template id="template-card-ricetta">
+            <li>
+              <div
+                class="recipies-card"
+                data-card-link
+                style="position: relative; cursor: pointer"
+              >
+                <button
+                  type="button"
+                  data-elimina-ricetta
+                  title="Elimina ricetta"
+                  aria-label="Elimina ricetta"
+                  style="
+                    position: absolute;
+                    top: 8px;
+                    right: 8px;
+                    z-index: 5;
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    border: none;
+                    background: rgba(0, 0, 0, 0.65);
+                    color: #fff;
+                    font-size: 16px;
+                    line-height: 1;
+                    cursor: pointer;
+                  "
+                >
+                  &times;
+                </button>
+
+                <div class="recipies-card__image">
+                  <a href="card.html" data-link>
+                    <img src="./patatinemessicane.jpeg" alt="" data-img />
+                  </a>
+                </div>
+
+                <div class="recipies-card__text">
+                  <h2 data-nome></h2>
+                  <div class="recipies-category" data-categoria></div>
+                  <p class="difficolta" data-difficolta></p>
+                  <div class="recipies-card__meta">
+                    <div class="stelle-difficolta" data-stelle-difficolta></div>
+
+                    <div class="prep-time">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-width="1.5"
+                          fill="none"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                        />
+                      </svg>
+                      <span>Totale:</span> <span data-tempo></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </template>
+        </ul>
+
+        <!-- Bottone per aprire il pop-up -->
+        <div style="margin: 2rem 0; text-align: center">
+          <button type="button" id="btn-apri-modal-ricetta" class="btn">
+            + Crea Ricetta
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Pop-up / Modale Crea Ricetta -->
+    <div
+      class="modal"
+      id="creaRicettaModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="creaRicettaTitle"
+      aria-hidden="true"
+    >
+      <div class="modal__backdrop" data-close-ricetta></div>
+
+      <div class="modal__dialog" role="document">
+        <button
+          type="button"
+          class="modal__close"
+          id="btn-chiudi-modal-ricetta"
+          aria-label="Chiudi"
+        >
+          &times;
+        </button>
+        <h2 id="creaRicettaTitle">Crea Ricetta</h2>
+
+        <div class="form-group">
+          <label for="titolo-ricetta">Nome del piatto</label>
+          <input
+            type="text"
+            id="titolo-ricetta"
+            placeholder="Es. Pasta al ragù"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="categoria-ricetta">Categoria</label>
+          <input
+            type="text"
+            id="categoria-ricetta"
+            placeholder="Es. primi, carne, dolci..."
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="difficolta-ricetta">Difficoltà</label>
+          <select id="difficolta-ricetta">
+            <option value="Facile">Facile</option>
+            <option value="Media">Media</option>
+            <option value="Difficile">Difficile</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="tempo-ricetta">Tempo totale (sulla card)</label>
+          <input type="text" id="tempo-ricetta" placeholder="Es. 45min" />
+        </div>
+
+        <div class="form-group">
+          <label for="prep-ricetta">Tempo preparazione</label>
+          <input type="text" id="prep-ricetta" placeholder="Es. 15 min" />
+        </div>
+
+        <div class="form-group">
+          <label for="cottura-ricetta">Tempo cottura</label>
+          <input type="text" id="cottura-ricetta" placeholder="Es. 30 min" />
+        </div>
+
+        <div class="form-group">
+          <label for="dosi-ricetta">Dosi per</label>
+          <input type="text" id="dosi-ricetta" placeholder="Es. 4 persone" />
+        </div>
+
+        <div class="form-group">
+          <label for="costo-ricetta">Costo</label>
+          <select id="costo-ricetta">
+            <option value="Basso">Basso</option>
+            <option value="Medio">Medio</option>
+            <option value="Alto">Alto</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="immagine-ricetta">Percorso o link immagine</label>
+          <input
+            type="text"
+            id="immagine-ricetta"
+            placeholder="Es. ./patatinemessicane.jpeg"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="input-ingrediente">Inserire ingredienti</label>
+          <div class="riga-ingrediente">
+            <input
+              type="text"
+              id="input-ingrediente"
+              placeholder="Es. 320g spaghetti"
+            />
+            <button type="button" id="btn-aggiungi">Aggiungi</button>
+          </div>
+          <ul id="lista-ingredienti"></ul>
+        </div>
+
+        <div class="form-group">
+          <label for="procedimento-ricetta"
+            >Procedimento (un passaggio per riga)</label
+          >
+          <textarea
+            id="procedimento-ricetta"
+            rows="4"
+            placeholder="Scrivi i passaggi della preparazione..."
+          ></textarea>
+        </div>
+
+        <button type="button" id="btn-crea-card">Crea Ricetta</button>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-inner">Sito realizzato da Gava Marco</div>
+    </footer>
+
+    <!-- ====== MODAL BLOG ====== -->
+    <div
+      class="modal"
+      id="blogModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="blogTitle"
+      aria-hidden="true"
+    >
+      <div class="modal__backdrop" data-close></div>
+
+      <div class="modal__dialog" role="document">
+        <button class="modal__close" aria-label="Chiudi" data-close>
+          &times;
+        </button>
+        <h2 id="blogTitle">Blog</h2>
+        <p>Qui troverai gli ultimi articoli, trucchi in cucina e novità.</p>
+      </div>
+    </div>
+
+    <template id="template-stella-difficolta">
+      <svg
+        class="stella-difficolta-svg"
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        aria-hidden="true"
+      >
+        <path
+          d="M12 2.2l2.95 5.98 6.6.96-4.78 4.65 1.13 6.58L12 17.27l-5.9 3.1 1.13-6.58-4.78-4.65 6.6-.96L12 2.2z"
+        />
+      </svg>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      const SUPABASE_URL = "https://sqnulsgwlajfjryiwyku.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "sb_publishable_X0q8Z9AwLJMTM-nh-hcRsw_tPS5w2B-";
+      const supabaseClient = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+      );
+
+      const grigliaRicette = document.querySelector(".recipies-grid");
+      const templateCard = document.getElementById("template-card-ricetta");
+      const templateStella = document.getElementById(
+        "template-stella-difficolta",
+      );
+
+      const modalRicetta = document.getElementById("creaRicettaModal");
+      const btnApriModalRicetta = document.getElementById(
+        "btn-apri-modal-ricetta",
+      );
+      const btnChiudiModalRicetta = document.getElementById(
+        "btn-chiudi-modal-ricetta",
+      );
+      const backdropRicetta = modalRicetta.querySelector(
+        "[data-close-ricetta]",
+      );
+
+      const inputTitolo = document.getElementById("titolo-ricetta");
+      const inputCategoria = document.getElementById("categoria-ricetta");
+      const selectDifficolta = document.getElementById("difficolta-ricetta");
+      const inputTempo = document.getElementById("tempo-ricetta");
+      const inputPrep = document.getElementById("prep-ricetta");
+      const inputCottura = document.getElementById("cottura-ricetta");
+      const inputDosi = document.getElementById("dosi-ricetta");
+      const selectCosto = document.getElementById("costo-ricetta");
+      const inputImmagine = document.getElementById("immagine-ricetta");
+      const inputIngrediente = document.getElementById("input-ingrediente");
+      const btnAgg = document.getElementById("btn-aggiungi");
+      const listaIngredienti = document.getElementById("lista-ingredienti");
+      const inputProcedimento = document.getElementById("procedimento-ricetta");
+      const btnCreaCard = document.getElementById("btn-crea-card");
+
+      function apriModalRicetta() {
+        modalRicetta.style.display = "flex";
+        modalRicetta.classList.add("is-open");
+        modalRicetta.setAttribute("aria-hidden", "false");
+        inputTitolo.focus();
+      }
+
+      function chiudiModalRicetta() {
+        modalRicetta.style.display = "none";
+        modalRicetta.classList.remove("is-open");
+        modalRicetta.setAttribute("aria-hidden", "true");
+      }
+
+      btnApriModalRicetta.addEventListener("click", apriModalRicetta);
+      btnChiudiModalRicetta.addEventListener("click", chiudiModalRicetta);
+      backdropRicetta.addEventListener("click", chiudiModalRicetta);
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && modalRicetta.classList.contains("is-open")) {
+          chiudiModalRicetta();
+        }
+      });
+
+      function aggiungiIngrediente() {
+        const testo = inputIngrediente.value.trim();
+        if (!testo) return;
+
+        const li = document.createElement("li");
+        li.textContent = testo;
+        listaIngredienti.appendChild(li);
+
+        inputIngrediente.value = "";
+        inputIngrediente.focus();
+      }
+
+      btnAgg.addEventListener("click", aggiungiIngrediente);
+      inputIngrediente.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          aggiungiIngrediente();
+        }
+      });
+
+      function getNumeroStelleDaDifficolta(difficolta) {
+        const val = String(difficolta || "")
+          .trim()
+          .toLowerCase();
+        if (val === "facile" || val === "bassa") return 1;
+        if (val === "media") return 2;
+        if (val === "difficile" || val === "alta") return 3;
+        return 1;
+      }
+
+      function renderStelleDifficolta(contenitore, difficolta) {
+        if (!contenitore || !templateStella) return;
+        contenitore.innerHTML = "";
+
+        const totale = getNumeroStelleDaDifficolta(difficolta);
+        for (let i = 0; i < totale; i++) {
+          contenitore.appendChild(templateStella.content.cloneNode(true));
+        }
+      }
+
+      function renderCard(ricetta) {
+        const clone = templateCard.content.cloneNode(true);
+
+        const cardEl = clone.querySelector("[data-card-link]");
+        const btnElimina = clone.querySelector("[data-elimina-ricetta]");
+        const linkEl = clone.querySelector("[data-link]");
+        const imgEl = clone.querySelector("[data-img]");
+        const nomeEl = clone.querySelector("[data-nome]");
+        const categoriaEl = clone.querySelector("[data-categoria]");
+        const difficoltaEl = clone.querySelector("[data-difficolta]");
+        const tempoEl = clone.querySelector("[data-tempo]");
+        const boxStelle = clone.querySelector("[data-stelle-difficolta]");
+
+        renderStelleDifficolta(boxStelle, ricetta.difficolta);
+
+        const targetUrl = `card.html?id=${encodeURIComponent(ricetta.id)}`;
+        linkEl.href = targetUrl;
+
+        cardEl.addEventListener("click", (e) => {
+          if (
+            e.target.closest("a") ||
+            e.target.closest("[data-elimina-ricetta]")
+          ) {
+            return;
+          }
+          window.location.href = targetUrl;
+        });
+
+        btnElimina.addEventListener("click", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const conferma = confirm(
+            `Vuoi eliminare la ricetta "${ricetta.titolo}"?`,
+          );
+          if (!conferma) return;
+
+          const { error } = await supabaseClient
+            .from("ricette")
+            .delete()
+            .eq("id", ricetta.id);
+
+          if (error) {
+            console.error("Errore eliminazione ricetta:", error);
+            alert("Errore durante l'eliminazione della ricetta.");
+            return;
+          }
+
+          const liPadre = btnElimina.closest("li");
+          if (liPadre) liPadre.remove();
+        });
+
+        imgEl.src = ricetta.immagine || "./patatinemessicane.jpeg";
+        imgEl.alt = ricetta.titolo;
+
+        nomeEl.textContent = ricetta.titolo;
+        categoriaEl.textContent = ricetta.categoria || "generale";
+        difficoltaEl.textContent = ricetta.difficolta || "Media";
+        tempoEl.textContent = ricetta.tempo || ricetta.tempo_prep || "30min";
+
+        grigliaRicette.appendChild(clone);
+      }
+
+      btnCreaCard.addEventListener("click", async () => {
+        const titolo = inputTitolo.value.trim();
+        const categoria = inputCategoria.value.trim();
+        const difficolta = selectDifficolta.value;
+        const tempo = inputTempo.value.trim();
+        const tempo_prep = inputPrep.value.trim();
+        const tempo_cottura = inputCottura.value.trim();
+        const dosi = inputDosi.value.trim();
+        const costo = selectCosto.value;
+        const immagine = inputImmagine.value.trim();
+        const procedimento = inputProcedimento.value.trim();
+        const ingredienti = Array.from(
+          listaIngredienti.querySelectorAll("li"),
+        ).map((li) => li.textContent);
+
+        if (!titolo || ingredienti.length === 0) {
+          alert("Inserisci almeno il nome del piatto e un ingrediente!");
+          return;
+        }
+
+        const nuovaRicetta = {
+          titolo,
+          categoria,
+          difficolta,
+          stelle: getNumeroStelleDaDifficolta(difficolta),
+          tempo,
+          tempo_prep,
+          tempo_cottura,
+          dosi,
+          costo,
+          immagine,
+          ingredienti,
+          procedimento,
+        };
+
+        const { data, error } = await supabaseClient
+          .from("ricette")
+          .insert(nuovaRicetta)
+          .select()
+          .single();
+
+        if (error) {
+          console.error("Errore salvataggio ricetta:", error);
+          alert("Errore nel salvataggio su Supabase: " + error.message);
+          return;
+        }
+
+        renderCard(data);
+
+        inputTitolo.value = "";
+        inputCategoria.value = "";
+        inputTempo.value = "";
+        inputPrep.value = "";
+        inputCottura.value = "";
+        inputDosi.value = "";
+        inputImmagine.value = "";
+        inputProcedimento.value = "";
+        listaIngredienti.innerHTML = "";
+
+        chiudiModalRicetta();
+      });
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const { data, error } = await supabaseClient
+          .from("ricette")
+          .select("*")
+          .order("id", { ascending: true });
+
+        if (error) {
+          console.error("Errore caricamento ricette:", error);
+          return;
+        }
+
+        (data || []).forEach(renderCard);
+      });
+    </script>
+    <script src="app.js"></script>
+  </body>
+</html>
